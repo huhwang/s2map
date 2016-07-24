@@ -1,13 +1,11 @@
 <html>
   <head>
-<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
-<!--[if lte IE 8]>
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4.5/leaflet.ie.css" />
-<![endif]-->
-
-<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>    
-<script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js"></script>
-<script type="text/javascript" src="thirdparty/jquery.js"></script>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    <link rel="stylesheet" href="thirdparty/leaflet-0.7.3/leaflet.css" />
+    <script type="text/javascript" src="thirdparty/leaflet-0.7.3/leaflet.js"></script>
+    <script type="text/javascript" src="thirdparty/tile.stamen.js"></script>
+    <script type="text/javascript" src="thirdparty/jquery.js"></script>
     <script type="text/javascript" src="thirdparty/underscore.js"></script>
     <script type="text/javascript" src="thirdparty/backbone-min.js"></script>
     <script type="text/javascript" src="wicket.js"></script>
@@ -15,21 +13,11 @@
     <script type="text/javascript" src="llmap.js"></script>
     <script type="text/javascript" src="thirdparty/leaflet-geodesy.js"></script>
 
-<script type="text/javascript">
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-37132882-1']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>
-
     <style>
+
+div.controls label {
+    font-size: .8em;
+}
 
 .info {
   display: none;
@@ -49,26 +37,24 @@
   overflow: hidden;
 }
 
-      .controlsBox {
-        padding: 10px;
-        -webkit-border-radius: 15px;
-        -moz-border-radius: 15px;
-        border-radius: 15px;
+    .controlsBox {
+        padding: 5px;
 
-background: #E9EAEE;
-border: 2px solid white;
-margin: 0 auto;
-box-shadow: 1px 2px 6px rgba(0, 0, 0, 0.5);
--moz-box-shadow: 1px 2px 6px rgba(0,0,0, 0.5);
--webkit-box-shadow: 1px 2px 6
+        background: #E9EAEE;
+        border: 2px solid white;
+        margin: 0 auto;
+        box-shadow: 1px 2px 6px rgba(0, 0, 0, 0.5);
+        -moz-box-shadow: 1px 2px 6px rgba(0,0,0, 0.5);
+        -webkit-box-shadow: 1px 2px 6
 
 
         z-index: 50;
         background: white;
         position: fixed;
-        width: 170px;
-        /* height: 440 px; */
+        width: 190px;
+        height: 95%;
 
+        overflow: scroll;
       }
 
 
@@ -162,7 +148,7 @@ a.button:active span {
           Point mode
         </label>
 	<br/>
-    
+
         <label>
           <input type="radio" name="mode" value="circle" class="circleMode" data-mode="circle"/>
           Circle mode
@@ -198,8 +184,8 @@ a.button:active span {
 
       <div class="plotButtonBox">
         <a class="button boundsButton"><span>Plot</span></a>
-      </div> 
-  
+      </div>
+
       <div class="info"/>
      </div>
     </div>

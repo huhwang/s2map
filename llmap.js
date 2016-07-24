@@ -1,12 +1,9 @@
 var baseurl = function(part) {
-  return 'http://s2map.com/api' + part;
+  return '/s2mapapi' + part;
 }
 
 var method = 'POST';
 if (window.location.host == 'localhost') {
-  baseurl = function(part) {
-    return 'http://localhost:9000' + part + '?callback=?';
-  }
   method = 'GET';
 }
 
@@ -216,6 +213,7 @@ getPoints: function(tokens) {
   },
 
   renderS2Cells: function(cells) {
+    console.log("renderS2Cells");
     var bounds = null;
     var polygons = this.renderCells(cells);
     _.each(polygons, function(p) {
@@ -224,6 +222,7 @@ getPoints: function(tokens) {
       }
       bounds = bounds.extend(p.getBounds());
     });
+    console.log("setView", bounds.getCenter());
     this.map.setView(bounds.getCenter());
     this.map.fitBounds(bounds);
   },
@@ -243,18 +242,26 @@ getPoints: function(tokens) {
       }
       return true;
     });
+    ids = idList.join(',');
+
+    if (!ids) {
+        console.error("no ids entered");
+        return;
+    }
+
     $.ajax({
       url: baseurl('/s2info'),
-      type: method,
+      type: "GET",
       dataType: 'json',
       data: {
-        'id': idList.join(',')
+        'id': ids
       },
       success: _.bind(this.renderS2Cells, this)
     });
   },
 
 renderMarkers: function(points) {
+    console.log("renderMarkers");
   var bounds = new L.LatLngBounds(_.map(points, function(p) {
     return p.getLatLng();
   }));
@@ -325,7 +332,7 @@ renderPolygon: function(polygon, bounds, dontClear) {
   }
 
   this.layerGroup.addLayer(polygon);
- 
+
   var downloadLink = $('<a href="#">Download as GeoJSON</a>');
   polygon.bindPopup(downloadLink.click(_.bind(function() {
     this.downloadData(polygon.toGeoJSON());
@@ -343,11 +350,11 @@ boundsCallback: function() {
   var bboxstr = this.$boundsInput.val() || this.placeholder;
 
   try {
-    console.log('trying json parse')
     geojsonFeature = JSON.parse(bboxstr);
+    console.log('got json')
   } catch(e) {
-   console.log(e)
-   console.log('could not parse')
+   //console.log(e)
+   console.log('could not parse bounding box as json', bboxstr)
    geojsonFeature = null;
   }
 
@@ -355,9 +362,10 @@ boundsCallback: function() {
     var wkt = new Wkt.Wkt();
     console.log(bboxstr);
     wktFeature = wkt.read(bboxstr);
+    console.log('got wkt')
   } catch(e) {
-   console.log(e)
-   console.log('could not parse as wkt')
+   //console.log(e)
+   console.log('could not parse bounding box as wkt')
    wktFeature = null;
   }
 
@@ -404,6 +412,8 @@ boundsCallback: function() {
 
   var polygonPoints = []
   if (points.length == 0) {
+    console.log('got s2')
+
     // try s2 parsing!
     this.idsCallback();
     return;
@@ -471,7 +481,7 @@ boundsCallback: function() {
 
   var dotIcon = L.icon({
     iconAnchor: [5, 5],
-    iconUrl: '/img/blue-dot.png',
+    iconUrl: 'img/blue-dot.png',
   })
   var markerOpts = {}
   if (!this.inPointMode()) {
@@ -582,7 +592,9 @@ initialize: function() {
 
   var opts = {
     attributionControl: false,
-    zoomControl: false
+    zoomControl: false,
+    center: [0, 0],
+    zoom: 2,
   }
 
   this.map = new L.Map('map', opts);
@@ -590,8 +602,13 @@ initialize: function() {
   zoom.setPosition('topright');
   this.map.addControl(zoom);
 
+  L.tileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    subdomains: ['a', 'b', 'c']
+  }).addTo(this.map);
+
   this.attribution = new L.Control.Attribution();
-  this.attribution.addAttribution(this.baseMap[2]);
+  //this.attribution.addAttribution(this.baseMap[2]);
   this.attribution.addAttribution("<a href=\"http://code.google.com/p/s2-geometry-library/\">S2</a>");
   this.attribution.addAttribution("<a href=\"/README.html\">About</a>");
   this.map.addControl(this.attribution);
@@ -599,7 +616,7 @@ initialize: function() {
   this.layerGroup = new L.LayerGroup();
   this.map.addLayer(this.layerGroup);
 
-  var basemapSelector = $('.basemapSelector');
+  /*var basemapSelector = $('.basemapSelector');
   _.each(this.baseMaps, function (basemapEntry, index) {
     basemapSelector.append(
       $('<option></option>').attr("value", index).text(basemapEntry[0])
@@ -608,9 +625,9 @@ initialize: function() {
   this.map.addLayer(this.baseMap[1]);
   basemapSelector.change(_.bind(function(e) {
     this.switchBaseMap(
-      this.baseMaps[parseInt(basemapSelector.find("option:selected")[0].value)]
+      //this.baseMaps[parseInt(basemapSelector.find("option:selected")[0].value)]
     );
-  }, this));
+  }, this));*/
 
   this.map.on('click', _.bind(function(e) {
     if (e.originalEvent.metaKey ||
@@ -669,22 +686,7 @@ initialize: function() {
 },
 
 initMapPage: function() {
-  var placeholders = [
-   '40.74,-74.0',
-   '40.74,-74.0,40.75,-74.1',
-   'bbox: { \n' +
-   '  ne: { ' +
-   '     lat: 40.74,' +
-   '     lng: -74.0' +
-   '   },' +
-   '   sw: {' +
-   '     lat: 40.75, ' +
-   '     lng: -74.1 ' +
-   '   }, ' +
-   ' }',
-  ];
-
-  this.placeholder = _.first(_.shuffle(placeholders));
+  this.placeholder = "";
   this.$boundsInput.attr('placeholder', this.placeholder);
 
   this.parseHash(window.location.hash.substring(1) || window.location.search.substring(1));
