@@ -17,3 +17,6 @@ http-server
 *.Plo
 *.Po
 *.so.*
+
+.vscode
+*.pyc
