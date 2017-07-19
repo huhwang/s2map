@@ -664,12 +664,14 @@ initialize: function() {
   }, this));
 
   this.$boundsButton.click(_.bind(this.boundsCallback, this));
-  this.$boundsInput.keypress(/** @param {jQuery.Event} e */ _.bind(function(e) {
-    // search on enter only
-    if (e.which == 13) {
-      // this.boundsCallback();
-    }
-  }, this));
+  // this.$boundsInput.keypress(
+  //   /** @param {jQuery.Event} e */
+  //    _.bind(function(e) {
+  //   // search on enter only
+  //   if (e.which == 13) {
+  //     this.boundsCallback();
+  //   }
+  // }, this));
 
   this.$s2options = this.$el.find('.s2options');
   this.$s2coveringButton = this.$el.find('.s2cover');
@@ -686,7 +688,7 @@ initialize: function() {
 },
 
 initMapPage: function() {
-  this.placeholder = "";
+  this.placeholder = "enter coordinates here. eg:\n39.89871588763039,116.39161705970763";
   this.$boundsInput.attr('placeholder', this.placeholder);
 
   this.parseHash(window.location.hash.substring(1) || window.location.search.substring(1));
@@ -744,7 +746,7 @@ deparam: function (querystring) {
 
 parseHash: function(hash) {
   if (hash.indexOf('=') == -1) {
-    this.$boundsInput.val(hash);
+    // this.$boundsInput.val(hash);
     return;
   }
 
@@ -779,7 +781,6 @@ parseHash: function(hash) {
   this.$minLevel.val(params.s2_min_level);
   this.$maxLevel.val(params.s2_max_level);
   this.$levelMod.val(params.s2_level_mod);
-
   this.$boundsInput.val(params.points);
 },
 

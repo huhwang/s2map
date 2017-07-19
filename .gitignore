@@ -20,3 +20,4 @@ http-server
 
 .vscode
 *.pyc
+favicon.ico
